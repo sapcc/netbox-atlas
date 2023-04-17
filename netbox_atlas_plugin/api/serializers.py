@@ -91,24 +91,23 @@ class PrometheusVirtualMachineSerializer(serializers.ModelSerializer):
 
 
 def get_targets(vm, target):
-    match target:
-        case "primary_ip":
-            if getattr(vm, "primary_ip", None) is not None:
-                return [str(IPNetwork(vm.primary_ip.address).ip)]
-            if getattr(vm, "primary_ip4", None) is not None:
-                return [str(IPNetwork(vm.primary_ip4.address).ip)]
-        case "mgmt_only":
-            interfaces = []
-            if hasattr(vm, "interfaces") and vm.interfaces is not None:
-                result = vm.interfaces.filter(mgmt_only=True)
-                interfaces = map(lambda i: str(IPNetwork(i.ip_addresses.first().address).ip), result)
-            return interfaces
-        case "loopback10":
-            interfaces = []
-            if hasattr(vm, "interfaces") and vm.interfaces is not None:
-                result = vm.interfaces.filter(name='Loopback10')
-                interfaces = map(lambda i: str(IPNetwork(i.ip_addresses.first().address).ip), result)
-            return  interfaces
-        case _:
-            if hasattr(vm, "primary_ip") and vm.primary_ip is not None:
-                return [str(IPNetwork(vm.primary_ip.address).ip)]
+    if target == "primary_ip":
+        if getattr(vm, "primary_ip", None) is not None:
+            return [str(IPNetwork(vm.primary_ip.address).ip)]
+        if getattr(vm, "primary_ip4", None) is not None:
+            return [str(IPNetwork(vm.primary_ip4.address).ip)]
+    elif target == "mgmt_only":
+        interfaces = []
+        if hasattr(vm, "interfaces") and vm.interfaces is not None:
+            result = vm.interfaces.filter(mgmt_only=True)
+            interfaces = map(lambda i: str(IPNetwork(i.ip_addresses.first().address).ip), result)
+        return interfaces
+    elif target ==  "loopback10":
+        interfaces = []
+        if hasattr(vm, "interfaces") and vm.interfaces is not None:
+            result = vm.interfaces.filter(name='Loopback10')
+            interfaces = map(lambda i: str(IPNetwork(i.ip_addresses.first().address).ip), result)
+        return  interfaces
+    else:
+        if hasattr(vm, "primary_ip") and vm.primary_ip is not None:
+            return [str(IPNetwork(vm.primary_ip.address).ip)]
