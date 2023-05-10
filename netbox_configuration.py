@@ -38,7 +38,7 @@ def _environ_get_and_map(variable_name: str, default: str | None = None, map_fn:
 
     if not map_fn:
         return env_value
-    
+
     return map_fn(env_value)
 
 _AS_BOOL = lambda value : value.lower() == 'true'
