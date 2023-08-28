@@ -1,6 +1,6 @@
 from virtualization.models import VirtualMachine
 from dcim.models.devices import Device
-from netbox.api.viewsets import ModelViewSet
+from netbox.api.viewsets import NetBoxModelViewSet
 from dcim.filtersets import DeviceFilterSet
 from virtualization.filtersets import VirtualMachineFilterSet
 
@@ -12,7 +12,7 @@ from .serializers import (
 
 
 class VirtualMachineViewSet(
-    ModelViewSet
+    NetBoxModelViewSet
 ):
     queryset = VirtualMachine.objects.prefetch_related(
         "cluster",
@@ -26,7 +26,7 @@ class VirtualMachineViewSet(
     pagination_class = None
 
 
-class DeviceViewSet(ModelViewSet):
+class DeviceViewSet(NetBoxModelViewSet):
     queryset = Device.objects.prefetch_related(
         "device_type",
         "device_role",
