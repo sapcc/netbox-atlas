@@ -24,3 +24,8 @@ yamllint = "^1.30.0"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+select = ["E", "F", "DJ"]
+line-length = 999
+target-version = "py38"

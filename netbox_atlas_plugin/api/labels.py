@@ -4,10 +4,10 @@ class LabelDict(dict):
         self.__setitem__('server_id', str(obj.id))
         if getattr(obj, "status", None) is not None:
             self.__setitem__('status', obj.status)
-        
+
         if getattr(obj, "display_name", None) is not None:
             self.__setitem__('name', obj.display_name)
-        
+
         if getattr(obj, "name", None) is not None:
             self.__setitem__('name', obj.name)
 

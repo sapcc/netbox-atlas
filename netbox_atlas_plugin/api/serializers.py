@@ -19,11 +19,11 @@ class PrometheusDeviceSerializer(serializers.ModelSerializer):
     @cached_property
     def get_target_field(self):
         return self.context['request'].query_params.get('target', 'primary_ip')
-    
+
     @cached_property
     def get_metrics_field(self):
         return self.context['request'].query_params.get('metrics_label', '')
-    
+
     @cached_property
     def get_custom_fields(self):
         cl = self.context['request'].query_params.get('custom_labels', None)
@@ -61,11 +61,11 @@ class PrometheusVirtualMachineSerializer(serializers.ModelSerializer):
     @cached_property
     def get_target_field(self):
         return self.context['request'].query_params.get('target', 'primary_ip')
-    
+
     @cached_property
     def get_metrics_field(self):
         return self.context['request'].query_params.get('metrics_label', '')
-    
+
     @cached_property
     def get_custom_fields(self):
         cl = self.context['request'].query_params.get('custom_labels', None)
