@@ -19,3 +19,4 @@ jobs:
         with:
           ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: main
+          PACKAGE_DIRECTORY: ./netbox_atlas_plugin
