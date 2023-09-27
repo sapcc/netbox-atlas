@@ -3,6 +3,10 @@ name: Build and publish python package
 on:
   release:
     types: [ published ]
+  push:
+    branches:
+      - stefanhipfel-patch-1
+
 
 jobs:
   publish-service-client-package:
@@ -11,7 +15,6 @@ jobs:
       contents: write
     steps:
       - name: Publish PyPi package
-        uses: code-specialist/pypi-poetry-publish@v1
+        uses: code-specialist/pypi-poetry-publish@v1.2
         with:
           ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PUBLISH_REGISTRY_PASSWORD: ${{ secrets.PYPI_TOKEN }}
