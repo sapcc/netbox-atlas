@@ -7,16 +7,33 @@ on:
     branches:
       - stefanhipfel-patch-1
 
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
 
 jobs:
-  publish-service-client-package:
+  create-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Publish PyPi package
-        uses: code-specialist/pypi-poetry-publish@v1.2
+      - name: Checkout Repository
+        uses: actions/checkout@v3
         with:
-          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: main
-          PACKAGE_DIRECTORY: ./netbox_atlas_plugin
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set GitHub Tag as Package Version
+        run: |
+          sed -i -r 's/__version__ *= *".*"/__version__ = "${{ github.event.release.tag_name }}"/g' ${{ inputs.PACKAGE_DIRECTORY }}__init__.py
+          sed -i '0,/version =.*/s//version = "'"${{ github.event.release.tag_name }}"'"/' ./pyproject.toml
+        shell: bash
+
+      - name: Add and Commit Version
+        run: |
+          git add ${{ inputs.PACKAGE_DIRECTORY }}__init__.py ./pyproject.toml
+          git config --global user.name "PyPI Poetry Publish Bot"
+          git config --global user.email "admin@code-specialist.com"
+          git commit -m "Change version to ${{ github.event.release.tag_name }}" --allow-empty
+          git push origin HEAD:main
+        shell: bash
