@@ -27,7 +27,7 @@ jobs:
         run: |
           sed -i -r 's/version *= *".*"/version = "${{ github.event.release.tag_name }}"/g' ./netbox_atlas_plugin/__init__.py
           sed -i '0,/version =.*/s//version = "'"${{ github.event.release.tag_name }}"'"/' ./pyproject.toml
-          sed -i -r 's/version *= *'.*'/version = "${{ github.event.release.tag_name }}"/g' ./setup.py
+          sed -i -r 's/version*=*'.*'/version="${{ github.event.release.tag_name }}"/g' ./setup.py
         shell: bash
 
       - name: commit version to main
