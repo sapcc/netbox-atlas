@@ -27,7 +27,7 @@ jobs:
         run: |
           sed -i -r 's/version *= *".*"/version = "${{ github.event.release.tag_name }}"/g' ./netbox_atlas_plugin/__init__.py
           sed -i '0,/version =.*/s//version = "'"${{ github.event.release.tag_name }}"'"/' ./pyproject.toml
-          sed -i -r "s/version*= *'.*'/version='${{ github.event.release.tag_name }}'/g" ./setup.py
+          sed -i -r "s/version*= *'.*'/version=\'${{ github.event.release.tag_name }}\'/g" ./setup.py
         shell: bash
 
       - name: commit version to main
@@ -35,5 +35,5 @@ jobs:
           git add ./netbox_atlas_plugin/__init__.py ./pyproject.toml
           git config --global user.name "Github Action Release Bot"
           git commit -m "Change version to ${{ github.event.release.tag_name }}" --allow-empty
-          git push origin HEAD:test3
+          git push origin HEAD:test4
         shell: bash
