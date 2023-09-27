@@ -1,0 +1,36 @@
+name: Build and publish python package
+
+on:
+  release:
+    types: [ published ]
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set GitHub Release Tag as Poetry Package Version
+        run: |
+          sed -i -r 's/version *= *".*"/version = "${{ github.event.release.tag_name }}"/g' ./netbox_atlas_plugin/__init__.py
+          sed -i '0,/version =.*/s//version = "'"${{ github.event.release.tag_name }}"'"/' ./pyproject.toml
+          sed -i -r 's/version*= *".*"/version="${{ github.event.release.tag_name }}"/g' ./setup.py
+        shell: bash
+
+      - name: commit version to main
+        run: |
+          git add ./netbox_atlas_plugin/__init__.py ./pyproject.toml
+          git config --global user.name "Github Action Release Bot"
+          git commit -m "Change version to ${{ github.event.release.tag_name }}" --allow-empty
+          git push origin HEAD:main
+        shell: bash
