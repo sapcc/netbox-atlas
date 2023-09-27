@@ -23,17 +23,16 @@ jobs:
           ref: main
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set GitHub Tag as Package Version
+      - name: Set GitHub Release Tag as Poetry Package Version
         run: |
-          sed -i -r 's/__version__ *= *".*"/__version__ = "${{ github.event.release.tag_name }}"/g' ${{ inputs.PACKAGE_DIRECTORY }}__init__.py
+          sed -i -r 's/__version__ *= *".*"/__version__ = "${{ github.event.release.tag_name }}"/g' ./netbox_atlas_plugin/__init__.py
           sed -i '0,/version =.*/s//version = "'"${{ github.event.release.tag_name }}"'"/' ./pyproject.toml
         shell: bash
 
-      - name: Add and Commit Version
+      - name: commit version to main
         run: |
-          git add ${{ inputs.PACKAGE_DIRECTORY }}__init__.py ./pyproject.toml
-          git config --global user.name "PyPI Poetry Publish Bot"
-          git config --global user.email "admin@code-specialist.com"
+          git add ./netbox_atlas_plugin/__init__.py ./pyproject.toml
+          git config --global user.name "Github Action Release Bot"
           git commit -m "Change version to ${{ github.event.release.tag_name }}" --allow-empty
-          git push origin HEAD:main
+          git push origin HEAD:test
         shell: bash
