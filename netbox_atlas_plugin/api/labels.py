@@ -14,6 +14,8 @@ class LabelDict(dict):
         if getattr(obj, "device_type", None) is not None:
             self.__setitem__('manufacturer', obj.device_type.manufacturer.slug)
             self.__setitem__('device_type', obj.device_type.slug)
+            if getattr(obj.device_type, "model", None) is not None:
+                self.__setitem__('model', obj.device_type.model)
 
         if getattr(obj, "device_role", None) is not None:
             self.__setitem__('role', obj.device_role.slug)
@@ -23,6 +25,9 @@ class LabelDict(dict):
 
         if getattr(obj, "platform", None) is not None:
             self.__setitem__('platform', obj.platform.slug)
+        
+        if getattr(obj, "serial", None) is not None:
+            self.__setitem__('serial', obj.serial)
 
         if getattr(obj, "cluster", None) is not None:
             self.__setitem__("cluster",  obj.cluster.name)
