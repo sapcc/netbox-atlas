@@ -25,9 +25,9 @@ jobs:
 
       - name: Set GitHub Release Tag as Poetry Package Version
         run: |
-          sed -i -r 's/version *= *".*"/version = "${{ github.event.release.tag_name }}"/g' ./netbox_atlas_plugin/__init__.py
-          sed -i '0,/version =.*/s//version = "'"${{ github.event.release.tag_name }}"'"/' ./pyproject.toml
-          sed -i -r 's/version*= *".*"/version="${{ github.event.release.tag_name }}"/g' ./setup.py
+          sed -i -r 's/version *= *".*"/version = "${{ github.event.inputs.tag  }}"/g' ./netbox_atlas_plugin/__init__.py
+          sed -i '0,/version =.*/s//version = "'"${{ github.event.inputs.tag }}"'"/' ./pyproject.toml
+          sed -i -r 's/version*= *".*"/version="${{ github.event.inputs.tag }}"/g' ./setup.py
         shell: bash
 
       - name: Commit version to tag branch
