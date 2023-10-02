@@ -1,9 +1,11 @@
 name: publish python package
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "new tag name for release"
+        required: true
 
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
@@ -30,12 +32,12 @@ jobs:
 
       - name: Commit version to tag branch
         run: |
+          git branch ${{ github.event.inputs.tag }}-branch ${{ github.event.inputs.tag }}
+          git checkout ${{ github.event.inputs.tag }}-branch
           git add ./netbox_atlas_plugin/__init__.py ./pyproject.toml
           git config --global user.name "Stefan Hipfel"
           git config --global user.email "stefan.hipfel@sap.com"
-          git commit -m "Change version to ${{ github.ref_name }}" --allow-empty
-          git push origin HEAD:${{ github.ref_name }}
+          git commit -m "Create new release ${{ github.event.inputs.tag }}" --allow-empty
+          git tag ${{ github.event.inputs.tag }}
+          git push origin ${{ github.event.inputs.tag }}
         shell: bash
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
