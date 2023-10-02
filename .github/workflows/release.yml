@@ -38,6 +38,6 @@ jobs:
           git config --global user.name "Stefan Hipfel"
           git config --global user.email "stefan.hipfel@sap.com"
           git commit -m "Create new release ${{ github.event.inputs.tag }}" --allow-empty
-          git tag ${{ github.event.inputs.tag }}
-          git push origin ${{ github.event.inputs.tag }}
+          git tag v${{ github.event.inputs.tag }}
+          git push origin v${{ github.event.inputs.tag }}
         shell: bash
