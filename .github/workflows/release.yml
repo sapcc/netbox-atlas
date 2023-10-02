@@ -32,7 +32,7 @@ jobs:
 
       - name: Commit version to tag branch
         run: |
-          git branch ${{ github.event.inputs.tag }}-branch ${{ github.event.inputs.tag }}
+          git branch ${{ github.event.inputs.tag }}-branch
           git checkout ${{ github.event.inputs.tag }}-branch
           git add ./netbox_atlas_plugin/__init__.py ./pyproject.toml
           git config --global user.name "Stefan Hipfel"
