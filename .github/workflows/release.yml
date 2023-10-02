@@ -1,8 +1,11 @@
-name: Build and publish python package
+name: publish python package
 
 on:
   release:
     types: [ published ]
+  push:
+    branches:
+      - fix_gh
 
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
@@ -27,10 +30,15 @@ jobs:
           sed -i -r 's/version*= *".*"/version="${{ github.event.release.tag_name }}"/g' ./setup.py
         shell: bash
 
-      - name: commit version to main
+      - name: commit version to new_release branch
         run: |
           git add ./netbox_atlas_plugin/__init__.py ./pyproject.toml
           git config --global user.name "Github Action Release Bot"
           git commit -m "Change version to ${{ github.event.release.tag_name }}" --allow-empty
-          git push origin HEAD:main
+          git push origin HEAD:new_release
         shell: bash
+
+      - name: create pull request
+        run: gh pr create -B main -H new_release --title 'Merge new release into main branch' --body 'Created by Github action'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
