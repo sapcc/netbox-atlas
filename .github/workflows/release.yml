@@ -1,8 +1,9 @@
-name: Build and publish python package
+name: publish python package
 
 on:
-  release:
-    types: [ published ]
+  push:
+    tags:
+      - "v*.*.*"
 
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
@@ -27,10 +28,13 @@ jobs:
           sed -i -r 's/version*= *".*"/version="${{ github.event.release.tag_name }}"/g' ./setup.py
         shell: bash
 
-      - name: commit version to main
+      - name: Commit version to tag branch
         run: |
           git add ./netbox_atlas_plugin/__init__.py ./pyproject.toml
           git config --global user.name "Github Action Release Bot"
           git commit -m "Change version to ${{ github.event.release.tag_name }}" --allow-empty
-          git push origin HEAD:main
+          git push origin HEAD:${{ github.ref_name }}
         shell: bash
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
