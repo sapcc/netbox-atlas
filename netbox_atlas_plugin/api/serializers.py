@@ -97,22 +97,26 @@ def get_targets(vm, target):
         if getattr(vm, "primary_ip4", None) is not None:
             return [str(IPNetwork(vm.primary_ip4.address).ip)]
     elif target == "mgmt_only":
-        interfaces = []
+        targets = []
         if hasattr(vm, "interfaces") and vm.interfaces is not None:
             result = vm.interfaces.filter(mgmt_only=True)
-            interfaces = map(get_address, result)
-        return interfaces
+            targets = get_interface_addresses(result)
+        return targets
     elif target ==  "loopback10":
-        interfaces = []
+        targets = []
         if hasattr(vm, "interfaces") and vm.interfaces is not None:
             result = vm.interfaces.filter(name='Loopback10')
-            interfaces = map(get_address, result)
-        return  interfaces
+            targets = get_interface_addresses(result)
+        return  targets
     else:
         if hasattr(vm, "primary_ip") and vm.primary_ip is not None:
             return [str(IPNetwork(vm.primary_ip.address).ip)]
 
 
-def get_address(interface):
+def get_interface_addresses(interfaces):
+    interfaces = [i for i in map(map_ip_address, interfaces) if i is not None]
+    return interfaces
+    
+def map_ip_address(interface):
     if len(interface.ip_addresses.all()) > 0:
         return str(IPNetwork(interface.ip_addresses.first().address).ip)
