@@ -7,7 +7,7 @@ class NetBoxAtlasConfig(PluginConfig):
     description = (
         "A Netbox plugin to provide a Prometheus service discovery api"
     )
-    version = "0.1"
+    version = "1.0.5"
     author = "Stefan Hipfel"
     author_email = "stefan.hipfel@sap.com"
     base_url = "atlas"
