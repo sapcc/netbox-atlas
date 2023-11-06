@@ -22,7 +22,7 @@ services:
     tty: true
 
   postgres:
-    image: postgres:14-alpine
+    image: postgres:16-alpine
     env_file: .env
     volumes:
       - pgdata_netbox:/var/lib/postgresql/data
