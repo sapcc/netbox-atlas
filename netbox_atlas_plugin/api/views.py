@@ -29,7 +29,7 @@ class VirtualMachineViewSet(
 class DeviceViewSet(NetBoxModelViewSet):
     queryset = Device.objects.prefetch_related(
         "device_type",
-        "device_role",
+        "role",
         "primary_ip4",
         "platform",
         "site",

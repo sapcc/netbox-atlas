@@ -1,11 +1,27 @@
-FROM netboxcommunity/netbox:v3.5.9
+FROM python:3.11
+
+ENV PYTHONUNBUFFERED 1
+
+RUN mkdir -p /opt
 
 RUN pip install --upgrade pip\
     && pip install poetry
 
-RUN mkdir -p /source
-WORKDIR /source
-COPY . /source
+# -------------------------------------------------------------------------------------
+# install netbox
+# -------------------------------------------------------------------------------------
+ARG netbox_ver=master
+
+RUN git clone --single-branch --branch ${netbox_ver} https://github.com/netbox-community/netbox.git /opt/netbox/ && \
+    cd /opt/netbox/ && \
+    pip install -r /opt/netbox/requirements.txt
+
+# -------------------------------------------------------------------------------------
+# install netbox atlas plugin
+# -------------------------------------------------------------------------------------
+RUN mkdir -p /plugin
+WORKDIR /plugin
+COPY . /plugin
 RUN poetry config virtualenvs.create false \
     && poetry install --no-interaction --no-ansi
 

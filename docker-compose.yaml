@@ -15,7 +15,6 @@ services:
       - redis
     env_file:
       - ./.env
-    user: 'unit:root'
     volumes:
       - ./netbox_configuration.py:/opt/netbox/netbox/netbox/configuration.py:ro,Z
       - ./:/source:ro,Z

@@ -18,7 +18,7 @@ class LabelDict(dict):
                 self.__setitem__('model', obj.device_type.model)
 
         if getattr(obj, "role", None) is not None:
-            self.__setitem__('role', obj.device_role.slug)
+            self.__setitem__('role', obj.role.slug)
 
         if getattr(obj, "site", None) is not None:
             self.__setitem__('site', obj.site.slug)
