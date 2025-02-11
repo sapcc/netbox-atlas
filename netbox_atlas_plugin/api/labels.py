@@ -1,15 +1,19 @@
 class LabelDict(dict):
 
-    def add_netbox_labels(self, obj):
+    def add_netbox_labels(self, obj, target_name=None):
         self.__setitem__('server_id', str(obj.id))
         if getattr(obj, "status", None) is not None:
             self.__setitem__('status', obj.status)
 
         if getattr(obj, "display_name", None) is not None:
             self.__setitem__('name', obj.display_name)
+            if target_name:
+                self.__setitem__('name', f"{obj.display_name}-{target_name}")
 
         if getattr(obj, "name", None) is not None:
             self.__setitem__('name', obj.name)
+            if target_name:
+                self.__setitem__('name', f"{obj.name}-{target_name}")
 
         if getattr(obj, "device_type", None) is not None:
             self.__setitem__('manufacturer', obj.device_type.manufacturer.slug)
