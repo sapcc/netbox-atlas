@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "netbox-atlas-plugin"
-version = "1.0.6"
+version = "1.10.0"
 description = "A Netbox plugin to provide a Prometheus service discovery api"
 authors = ["Stefan Hipfel <stefan.hipfel@sap.com>"]
 license = "Apache-2.0"
