@@ -22,6 +22,10 @@ class PrometheusDeviceSerializer(serializers.ModelSerializer):
     @cached_property
     def get_metrics_field(self):
         return self.context['request'].query_params.get('metrics_label', '')
+    
+    @cached_property
+    def get_slug_field(self):
+        return "slug" if self.context['request'].query_params.get('no_slug', True) else "name"
 
     @cached_property
     def get_custom_fields(self):
@@ -78,9 +82,9 @@ class PrometheusDeviceSerializer(serializers.ModelSerializer):
         labels = LabelDict()
 
         if self.context['request'].query_params.get('target_in_name', False):
-            labels.add_netbox_labels(dv, None)
+            labels.add_netbox_labels(dv, None, self.get_slug_field)
         else:
-            labels.add_netbox_labels(dv, self.get_target_field)
+            labels.add_netbox_labels(dv, self.get_target_field, self.get_slug_field)
         labels.add_custom_labels(self.get_custom_fields)
         labels.add_custom_labels(self.get_configcontext(dv))
         labels.add_custom_labels(self.get_url(dv))
