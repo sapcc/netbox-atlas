@@ -23,13 +23,11 @@ class LabelDict(dict):
         self.update(*args, **kwargs)
 
     def add_netbox_labels(self, obj, overrides=None):
+        # Start with default labels
+        self.update(self.DEFAULT_LABELS)
         # Apply overrides if provided
         if overrides and isinstance(overrides, dict):
             self.update(overrides)
-        else:
-            # Use default labels if no overrides
-            self.update(self.DEFAULT_LABELS)
-
 
         # Dynamically populate labels from the object
         for label, obj_key in self.items():
