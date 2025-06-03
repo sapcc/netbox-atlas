@@ -1,44 +1,75 @@
 class LabelDict(dict):
+    DEFAULT_LABELS = {
+        'server_id': 'id',
+        'status': 'status',
+        'name': 'name{{-FOO}}',
 
-    def add_netbox_labels(self, obj, target_name=None, value_type="slug"):
-        self.__setitem__('server_id', str(obj.id))
-        if getattr(obj, "status", None) is not None:
-            self.__setitem__('status', obj.status)
+        'manufacturer': 'device_type:manufacturer:slug',
+        'device_type': 'device_type:slug',
+        'model': 'device_type:model{{-BAR}}',
 
-        if getattr(obj, "display_name", None) is not None:
-            self.__setitem__('name', obj.display_name)
-            if target_name:
-                self.__setitem__('name', f"{obj.display_name}-{target_name}")
+        'role': 'role:slug',
+        'site': 'site:slug',
+        'platform': 'platform:slug',
+        'serial': 'serial',
+        'cluster': 'cluster:name',
+        'cluster_group': 'cluster:group:slug',
+        'cluster_type': 'cluster:type:slug',
+    }
 
-        if getattr(obj, "name", None) is not None:
-            self.__setitem__('name', obj.name)
-            if target_name:
-                self.__setitem__('name', f"{obj.name}-{target_name}")
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+        # Allow overwriting defaults with provided values
+        self.update(*args, **kwargs)
 
-        if getattr(obj, "device_type", None) is not None:
-            self.__setitem__('manufacturer', getattr(obj.device_type.manufacturer, value_type, ""))
-            self.__setitem__('device_type', getattr(obj.device_type, value_type, ""))
-            if getattr(obj.device_type, "model", None) is not None:
-                self.__setitem__('model', obj.device_type.model)
+    def add_netbox_labels(self, obj, overrides=None):
+        # Start with default labels
+        self.update(self.DEFAULT_LABELS)
+        # Apply overrides if provided
+        if overrides and isinstance(overrides, dict):
+            self.update(overrides)
 
-        if getattr(obj, "role", None) is not None:
-            self.__setitem__('role', getattr(obj.role, value_type, ""))
-
-        if getattr(obj, "site", None) is not None:
-            self.__setitem__('site', getattr(obj.site, value_type, ""))
-
-        if getattr(obj, "platform", None) is not None:
-            self.__setitem__('platform', getattr(obj.platform, value_type, ""))
-        
-        if getattr(obj, "serial", None) is not None:
-            self.__setitem__('serial', obj.serial)
-
-        if getattr(obj, "cluster", None) is not None:
-            self.__setitem__("cluster",  obj.cluster.name)
-            if obj.cluster.group:
-                self.__setitem__("cluster_group", getattr(obj.cluster.group, value_type, ""))
-            if obj.cluster.type:
-                self.__setitem__("cluster_type", getattr(obj.cluster.type, value_type, ""))
+        # Dynamically populate labels from the object
+        for label, obj_key in self.items():
+            if ":" in obj_key:
+                # Handle nested attributes
+                keys = obj_key.split(':')
+                value = obj
+                for key in keys:
+                    if "{{" in key:
+                        # Handle hardcoded string addition
+                        key, hardcoded = key.split("{{")
+                        hardcoded = hardcoded.strip("}}")
+                        if hasattr(value, key):
+                            value = getattr(value, key)
+                            value = f"{value}{hardcoded}"  # Append the hardcoded string
+                        else:
+                            value = None
+                            break
+                    elif hasattr(value, key):
+                        value = getattr(value, key)
+                    else:
+                        value = None
+                        break
+                if value is not None:
+                    self.__setitem__(label, value)
+                else:
+                    self.__setitem__(label, "")
+            else:
+                # Handle direct attributes
+                value = None
+                if "{{" in obj_key:
+                    # Handle hardcoded string addition
+                    key, hardcoded = obj_key.split("{{")
+                    hardcoded = hardcoded.strip("}}")
+                    if hasattr(obj, key):
+                        value = getattr(obj, key)
+                        value = f"{value}{hardcoded}"  # Append the hardcoded string
+                    else:
+                        value = None
+                if hasattr(obj, obj_key):
+                    value = getattr(obj, obj_key)
+                self.__setitem__(label, value)
 
     def add_metrics_label(self, value):
         if value != '':
