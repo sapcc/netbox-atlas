@@ -2,11 +2,11 @@ class LabelDict(dict):
     DEFAULT_LABELS = {
         'server_id': 'id',
         'status': 'status',
-        'name': 'name{{-FOO}}',
+        'name': 'name',
 
         'manufacturer': 'device_type:manufacturer:slug',
         'device_type': 'device_type:slug',
-        'model': 'device_type:model{{-BAR}}',
+        'model': 'device_type:model',
 
         'role': 'role:slug',
         'site': 'site:slug',
