@@ -28,7 +28,7 @@ class PrometheusDeviceSerializer(serializers.ModelSerializer):
         labels = self.context['request'].query_params.get('overwrite_labels', None)
         if labels:
             labels = labels.split(';')
-            return {label.split(':')[0]: label.split(':')[1] for label in labels}
+            return {label.split('=')[0]: label.split('=')[1] for label in labels}
 
     @cached_property
     def get_custom_fields(self):
