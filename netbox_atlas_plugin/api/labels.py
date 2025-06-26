@@ -15,6 +15,9 @@ class LabelDict(dict):
         'cluster': 'cluster:name',
         'cluster_group': 'cluster:group:slug',
         'cluster_type': 'cluster:type:slug',
+
+        'tenant': 'tenant:slug',
+        'tenant_group': 'tenant:group:slug',
     }
 
     def __init__(self, *args, **kwargs):
@@ -52,7 +55,8 @@ class LabelDict(dict):
                         value = None
                         break
                 if value is not None:
-                    self.__setitem__(label, value)
+                    # convert to string if not None
+                    self.__setitem__(label, str(value))
                 else:
                     self.__setitem__(label, "")
             else:
@@ -69,7 +73,10 @@ class LabelDict(dict):
                         value = None
                 if hasattr(obj, obj_key):
                     value = getattr(obj, obj_key)
-                self.__setitem__(label, value)
+                if value is not None:
+                    self.__setitem__(label, str(value))
+                else:
+                    self.__setitem__(label, "")
 
     def add_metrics_label(self, value):
         if value != '':
