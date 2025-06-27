@@ -19,6 +19,7 @@ class VirtualMachineViewSet(
         "role",
         "platform",
         "primary_ip4",
+        "tenant",
     )
 
     filterset_class = VirtualMachineFilterSet
@@ -34,6 +35,7 @@ class DeviceViewSet(NetBoxModelViewSet):
         "platform",
         "site",
         "cluster",
+        "tenant",
     )
     filterset_class = DeviceFilterSet
     serializer_class = PrometheusDeviceSerializer
