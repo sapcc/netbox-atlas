@@ -141,6 +141,9 @@ def get_targets(obj, interface_name):
             return [str(IPNetwork(obj.primary_ip.address).ip)]
         if getattr(obj, "primary_ip4", None) is not None:
             return [str(IPNetwork(obj.primary_ip4.address).ip)]
+    elif interface_name == "oob_ip":
+        if getattr(obj, "oob_ip", None) is not None:
+            return [str(IPNetwork(obj.oob_ip.address).ip)]
     elif interface_name == "mgmt_only":
         targets = []
         if hasattr(obj, "interfaces") and obj.interfaces is not None:
